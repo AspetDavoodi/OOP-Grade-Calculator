@@ -33,7 +33,7 @@ class Student:
         QZ_calculated = float(self.Q_percent * self.quiz)
         Proj_calculated = float(self.Proj_percent * self.Project)
         finalGrade = float(Part_calculated + HW_calculated + QZ_calculated + Proj_calculated)
-        print("The Students final grade is:" + str(finalGrade) + "\n")
+        print("The Students final grade is: " + str(finalGrade) + "\n")
 
 
 def main():
