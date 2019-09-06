@@ -1,50 +1,437 @@
-class Student:
+import json
 
-    P_percent = 0.05
-    H_percent = 0.30
-    Q_percent = 0.25
-    Proj_percent = 0.40
+class Film:
 
-    def __init__(self, ID, firstName, lastName, gender, birthdate, participationGrade, homeworkGrade, quizGrade, ProjectGrade):
-        self.ID = ID
-        self.fullName = firstName + " " + lastName
-        self.email = firstName + "_" + lastName + "@edu.aua.am"
-        self.gender = gender
-        self.birthdate = birthdate
-        self.participation = participationGrade
-        self.homework = homeworkGrade
-        self.quiz = quizGrade
-        self.Project = ProjectGrade
+    def __init__(self,Brand, model, ISO, type, usage, is_highend, is_color, is_inproduction):
+        self.Brand = Brand
+        self.model = model
+        self.ISO = ISO
+        self.type = type
+        self.Usage = usage
+        self.is_highend = is_highend
+        self.is_color = is_color
+        self.is_inProduction = is_inproduction
+
+    def printRollInfo(self):
+        print(self.Brand)
+        print(self.model)
+        print(self.ISO)
+        print(self.type)
+        print(self.Usage)
+        print(self.is_highend)
+        print(self.is_color)
+        print(self.is_inProduction)
+
+    def processRolldataforSaving(self):
+        Rolldict = {
+
+        }
+        pass
+
+def checkAgreement(argument):
+    yesWords = ("Yes", "yes", "YES", "YeS", "yEs","yus","Yus","Yup","yup","mhm")
+
+    noWords = ("No", "no", "nO", "nope", "nein","nou","neh","nah", "Nein","Nou","Neh","Nah")
+
+    while True:
+        if argument in yesWords:
+            output = "1"
+            break
+        elif argument in noWords:
+            output = "0"
+            break
+        else:
+            output = "2"
+            break
+    return output
+
+def getRollData():
+    with open('RollData.json', 'r') as rolldata:
+        RollData = json.load (rolldata)
+    return RollData
+
+def modelsInBrand(Brand, RollData):
+    for key in RollData[Brand]:
+        print(key['model'])
+
+def modeChoice(RollData):
 
 
-    def getPersonalInfo(self):
-        print ("Personal information for Student #" + self.ID +" \n")
-        print(self.ID)
-        print(self.fullName)
-        print(self.email)
-        print(self.gender)
-        print(self.birthdate)
-        print(" \n")
+        while True:
+            modeChoice = input("""
+Please choose operation mode\n
+1- for Admin mode (to add new rolls top database)\n
+2- for User mode 
+
+input:  """)
+
+            if modeChoice.isnumeric() and int(modeChoice) == 1:
+               while True:
+                   modeContinue = input("Would you like to add a roll?")
+
+                   modeContinue = int(checkAgreement(modeContinue))
+
+                   if modeContinue == 1:
+                       adminMode(RollData)
+                   elif modeContinue == 0:
+                       print("successfully ended admin mode. Bye Bye!")
+                       exit()
+                   else:
+                       print("Invalid input, please try again")
+            elif modeChoice.isnumeric() and int(modeChoice) == 2:
+                userMode(RollData)
+                break
+            else:
+                print("invalid choice, please follow the instructions for choosing mode of operation")
+
+def userMode (RollData):
+
+    print("""Hello! You are now in User Mode!
+
+This program will help you choose a roll of film based on:
+
+-Your budget.
+-The time of day during which you are going to shoot the most.
+-Choice of black and white or color.
+-developing Processes available to you.
+
+""")
+
+    def getBudget():
+        while True:
+
+            userInput = input("Are you willing to pay more than 7 USD for a roll of film?")
+            userInput = int (checkAgreement(userInput))
+
+            if userInput == 1:
+                is_Highend = True
+                break
+            elif userInput == 0:
+                is_Highend = False
+                break
+            else: print("Invalid input, please try again")
+
+        return is_Highend
 
 
-    def getCurrentGrade(self):
-        Part_calculated = float(self.P_percent * self.participation)
-        HW_calculated = float(self.H_percent * self.homework)
-        QZ_calculated = float(self.Q_percent * self.quiz)
-        Proj_calculated = float(self.Proj_percent * self.Project)
-        finalGrade = float(Part_calculated + HW_calculated + QZ_calculated + Proj_calculated)
-        print("The Students final grade is: " + str(finalGrade) + "\n")
+    def getTimeofDay():
+        morningChoice = ("morning", "Morning")
+        noonChoice = ("noon", "Noon")
+        eveningChoice = ("evening", "Evening")
+        nightChoice = ("night", "Night")
+
+        while True:
+            time = input("""at what time during the day are you going to shoot the most?
+Here's how to input:
+
+08 am to 12 pm - write morning
+12 pm to 15 pm - write noon
+15 pm to 18 pm - write evening
+after 18 pm - write night
+""")
+
+            if time in morningChoice:
+                timeofday = 1
+                break
+            elif time in noonChoice:
+                timeofday = 2
+                break
+            elif time in eveningChoice:
+                timeofday = 3
+                break
+            elif time in nightChoice:
+                timeofday = 4
+                break
+            else: print("Invalid input, please try again")
+
+        return timeofday
 
 
-def main():
+    def timeofDaytoISO(timeofday):
 
-    st1 = Student("AUA123", "name1", "sur1", "Male", "04/09/2019", 98, 99, 75, 80)
-    st2 = Student("AUA456", "name2", "sur2", "Female", "02/05/2018", 89, 98, 96, 88)
+        ISOmin = 0
+        ISOmax = 0
 
-    st1.getPersonalInfo()
-    st1.getCurrentGrade()
+        if timeofday == 1:
+            ISOmin = 0
+            ISOmax = 200
 
-    st2.getPersonalInfo()
-    st2.getCurrentGrade()
+        elif timeofday == 2:
+            ISOmin = 200
+            ISOmax = 400
+
+        elif timeofday == 3:
+            ISOmin = 400
+            ISOmax = 800
+
+        elif timeofday == 4:
+            ISOmin = 800
+            ISOmax = 6400
+
+        ISO = range(ISOmin, ISOmax+1)
+        return ISO
+
+
+    def getColor():
+        while True:
+            userInput = input("Do you want color film?")
+            userInput = int(checkAgreement(userInput))
+
+            if userInput == 1:
+                is_Color = True
+                break
+            elif userInput == 0:
+                is_Color = False
+                break
+            else: print("Invalid input, please try again")
+        return is_Color
+
+
+    def getType():
+
+        while True:
+            userInput = input("Do you want negative film?")
+            userInput = int(checkAgreement(userInput))
+
+            if userInput == 1:
+                type = ["Negative"]
+                break
+            elif userInput == 0:
+                type = ["Slide"]
+                break
+            else: print("Invalid input, please try again")
+        return type
+
+
+    def findRolls(RollData, ISO, Budget, Color, Type):
+
+        brands = []
+        ISOfilter = []
+        BudgetFilter = []
+        colorFilter = []
+        processFilter = []
+
+
+        for i in RollData:
+            brands.append(i)
+
+        for i in brands:
+            for c in RollData[i]:
+                for z in c["ISO"]:
+                    if z in ISO:
+                        ISOfilter.append(c["model"])
+
+        for i in brands:
+            for c in RollData[i]:
+                if c["is_HighEnd"] == Budget:
+                    BudgetFilter.append(c["model"])
+
+        for i in brands:
+            for c in RollData[i]:
+                if c["is_Color"] == Color:
+                    colorFilter.append(c["model"])
+
+        for i in brands:
+            for c in RollData[i]:
+                if c["type"] in Type:
+                    processFilter.append(c["model"])
+
+
+        ISOfilter = set(ISOfilter)
+        BudgetFilter = set(BudgetFilter)
+        colorFilter = set(colorFilter)
+        processFilter = set(processFilter)
+
+        Filtered1 = ISOfilter.intersection(BudgetFilter)
+        Filtered2 = colorFilter.intersection(processFilter)
+
+        TotalFilter = Filtered1.intersection(Filtered2)
+
+        return (TotalFilter)
+
+    is_Highend = getBudget()
+    is_Color = getColor()
+    timeofday = getTimeofDay()
+    ISO = timeofDaytoISO(timeofday)
+    Type = getType()
+
+    FoundRolls = findRolls(RollData, ISO, is_Highend, is_Color, Type)
+
+    print("Here are some rolls you can get for your next shoot!\n")
+
+    for i in FoundRolls:
+        print (i)
+
+    print("\nHave fun!!!!")
+
+def adminMode (RollData):
+
+    def brandChoice():
+
+        while True:
+            tempBrandChoice = (input("\nPlease input the name of the Brand you would like to add a roll to.\n"))
+
+            brandValidation = RollData.get(tempBrandChoice)
+
+            if brandValidation is None:
+                print("Invalid input, please input the name of the brand you want to select")
+            else:
+                break
+        return tempBrandChoice
+
+    def ISOWrite():
+        ISORange = int(input("How many ISO's is the roll available in? (input an integer number)"))
+        ISOValues = []
+        for i in range(ISORange):
+            ISO = input("Please write the ISO values of the roll, in increasing order")
+            ISOValues.append(int(ISO))
+        return ISOValues
+
+    def typeWrite():
+
+
+        while True:
+
+            rollType = input("""
+Is the film Color? 
+input:  """)
+            rollType = checkAgreement(rollType)
+
+            if rollType.isnumeric() and int(rollType) == 0:
+                is_Color = False
+                break
+            elif rollType.isnumeric() and int(rollType) == 1:
+                is_Color = True
+                break
+            else:
+                print ("Invalid input! please refer to instructions above to select film type")
+        return is_Color
+
+    def usageWrite():
+        usageValues = []
+        while True:
+            usage = input("""
+Please write applications for this film, for example:
+Portraits
+Street
+Landscape
+General
+Studio
+
+Afterwards input 0 to end this process
+
+input:  """)
+            if usage.isnumeric() and int(usage) == 0:
+                break
+            else:
+                usageValues.append(usage)
+
+        return usageValues
+
+    def highEndWrite():
+
+        while True:
+            highEndArgument = input("Does one roll of the film cost more than 7 USD?")
+
+            highEndArgument = checkAgreement(highEndArgument)
+
+            if highEndArgument.isnumeric() and int(highEndArgument) == 1:
+                is_HighEnd = True
+                break
+            elif highEndArgument.isnumeric() and int(highEndArgument) == 0:
+                is_HighEnd = False
+                break
+            else:
+                print ("Invalid input, please refer to the instructions above")
+        return is_HighEnd
+
+    def productionWrite():
+
+        while True:
+            productionMode = input("Is this roll currently in production?")
+
+            productionMode = checkAgreement(productionMode)
+
+            if productionMode.isnumeric() and int(productionMode) == 1 :
+                is_inProduction = True
+                break
+            elif productionMode.isnumeric() and int(productionMode) == 0:
+                is_inProduction = False
+                break
+            else:
+                print("Invalid input, please refer to the instructions above")
+        return is_inProduction
+
+    def negOrPos():
+        while True:
+            negorposArg = input("""is the roll negative?(write No if it's Slide)
+input:""")
+            negorposArg = checkAgreement(negorposArg)
+
+            if negorposArg.isnumeric() and int(negorposArg) == 1:
+                return "Negative"
+            elif negorposArg.isnumeric() and int(negorposArg) == 0:
+                return "Slide"
+            else:
+                print("Invalid input, please refer to the instructions above")
+
+
+    print("""
+Hello! You are now in Admin mode.
+Here you can add new rolls of film that you found are missing from the database.
+Below are the list of Brands that already exist in the database. \n""")
+
+    print (("   \n").join(RollData.keys()))
+
+    brandChoice = brandChoice()
+
+    print ("Here are the models that already exist for the selected brand:\n",)
+    modelsInBrand(brandChoice,RollData)
+    modelName = input ("What is the name of the roll you'd like to add")
+
+    ISOValues = ISOWrite()
+
+    Color = typeWrite()
+
+    usage = usageWrite()
+
+    highend = highEndWrite()
+
+    type = negOrPos()
+
+
+
+    production = productionWrite()
+
+    newRoll = {
+        "model": modelName,
+        "ISO": ISOValues,
+        "type": type,
+        "Usage": usage,
+        "is_HighEnd": highend,
+        "is_Color": Color,
+        "is_inProduction": production
+    }
+
+    RollData[brandChoice].append(newRoll)
+
+    print ("Roll added succefully!!\n Thank you for your contribution.")
+
+    with open('RollData.json', 'w') as writeData:
+        json.dump(RollData, writeData, indent=4, separators=(',', ': '))
+
+def main ():
+
+    RollData = getRollData()
+
+    print (""" Hello! Welcome to FilmBuddy!
+    
+This application will help you choose a roll of film for your next photo shoot.
+Follow the instructions carefully, and enjoy!
+
+
+""")
+
+    modeChoice(RollData)
 
 main()
